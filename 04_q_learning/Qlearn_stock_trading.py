@@ -5,8 +5,8 @@ import numpy as np;
 #
 
 
-EPISODE_COUNT = 8000;
-DAYS_PER_EPISODE = 20;
+EPISODE_COUNT = 7500;
+DAYS_PER_EPISODE = 75;
 ACCT_BAL_0 = 1000;
 
 SHARES_PER_TRADE = 10; # buy/sell fixed number of shares each time for simplicity
@@ -26,7 +26,7 @@ GAMMA = .99;
 # Initialize state space, action space, and Q-table
 #
 
-state_count = 1040;
+state_count = 5000;
 action_count = 3;
 
 Q = np.zeros((state_count, action_count));
