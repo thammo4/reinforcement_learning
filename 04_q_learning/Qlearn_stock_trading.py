@@ -71,7 +71,6 @@ VIX = yf.Ticker('^VIX').history(start='2021-11-04', end='2023-11-01', interval='
 #
 
 
-# EPISODE_COUNT = 5000;
 EPISODE_COUNT = 3750;
 DAYS_PER_EPISODE = 50;
 ACCT_BAL_0 = 1000;
@@ -84,9 +83,9 @@ ACTIONS = ['hold', 'buy', 'sell'];
 # Define greek-constants: random-action-rate, learning-rate, discount-rate
 #
 
-EPSILON = .05;
-ALPHA = .10;
-GAMMA = .99;
+EPSILON = .125;
+ALPHA = .175;
+GAMMA = .90;
 
 
 #
@@ -106,7 +105,7 @@ Q = np.zeros((state_count, action_count));
 #
 
 def closing_price (theta):
-	return 10*np.sin(theta) + 25;
+	return 12*np.sin(.3*theta) + 25;
 
 
 
@@ -131,6 +130,7 @@ def closing_price (theta):
 
 def choose_action (state):
 	if np.random.rand() < EPSILON:
+		print('!!!!!!!!!!!!!!!!!!!!!!!! RANDOM ACTION !!!!!!!!!!!!!!!!!!!!!!!!!!');
 		return np.random.choice(action_count);
 	else:
 		return np.argmax(Q[state,:]);
