@@ -108,22 +108,6 @@ def closing_price (theta):
 	return 12*np.sin(.3*theta) + 25;
 
 
-
-#
-# Fetch 500 days of SPY data
-
-#
-# Simulate the daily closing volume
-#
-
-# def closing_volume (theta):
-# 	base_volume = 1e5;
-# 	noise = 5000*np.random.rand();
-# 	volume = base_volume + noise;
-# 	return int(volume);
-
-
-
 #
 # Define epsilon-greedy policy implementation (e.g. map: states -> actions)
 #
