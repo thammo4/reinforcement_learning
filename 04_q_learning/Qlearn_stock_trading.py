@@ -1,12 +1,79 @@
+import os, dotenv;
 import numpy as np;
+
+import yfinance as yf;
+
+from uvatradier import Tradier, Quotes;
+
+dotenv.load_dotenv();
+
+#
+# Authenticate Tradier API
+#
+
+tradier_acct 	= os.getenv('tradier_acct');
+tradier_token 	= os.getenv('tradier_token');
+
+
+#
+# Instantiate Quotes object and fetch 500 bars of SPY data
+#
+
+# >>> SPY
+#
+#            date    open     high       low   close     volume
+# 4    2021-11-05  469.28  470.650  466.9200  468.53   66390563
+# 5    2021-11-08  469.70  470.230  468.2031  468.93   50405194
+# 6    2021-11-09  469.32  469.570  465.8800  467.38   51149147
+# 7    2021-11-10  465.58  467.380  462.0400  463.62   69429653
+# 8    2021-11-11  465.21  465.290  463.7500  463.77   34848495
+# ..          ...     ...      ...       ...     ...        ...
+# 499  2023-10-26  416.45  417.325  411.6000  412.55  115156761
+# 500  2023-10-27  414.19  414.600  409.2100  410.68  107367671
+# 501  2023-10-30  413.56  416.680  412.2200  415.59   86562675
+# 502  2023-10-31  416.18  418.530  414.2100  418.20   79665150
+# 503  2023-11-01  419.20  423.500  418.6499  422.66   98068115
+#
+# [500 rows x 6 columns]
+
+quotes = Quotes(tradier_acct, tradier_token);
+SPY = quotes.get_historical_quotes(symbol='SPY', start_date='2021-11-04', end_date='2023-10-31')[4:]; # [4:] because SPY returns 504 rows, but we only need 500
+
+
+#
+# Fetch 500 bars of daily ^VIX data
+# Note - yahoo finance does not include the `end` date in the returned dataframe
+#
+
+# >>> VIX
+#                                 Open       High        Low      Close  Volume  Dividends  Stock Splits
+# Date
+# 2021-11-04 00:00:00-05:00  15.060000  16.139999  14.730000  15.440000       0        0.0           0.0
+# 2021-11-05 00:00:00-05:00  15.590000  17.020000  14.950000  16.480000       0        0.0           0.0
+# 2021-11-08 00:00:00-06:00  17.230000  17.690001  16.440001  17.219999       0        0.0           0.0
+# 2021-11-09 00:00:00-06:00  17.430000  18.570000  17.209999  17.780001       0        0.0           0.0
+# 2021-11-10 00:00:00-06:00  17.740000  19.900000  17.219999  18.730000       0        0.0           0.0
+# ...                              ...        ...        ...        ...     ...        ...           ...
+# 2023-10-25 00:00:00-05:00  19.389999  21.240000  18.860001  20.190001       0        0.0           0.0
+# 2023-10-26 00:00:00-05:00  21.780001  21.959999  20.219999  20.680000       0        0.0           0.0
+# 2023-10-27 00:00:00-05:00  20.389999  22.070000  19.719999  21.270000       0        0.0           0.0
+# 2023-10-30 00:00:00-05:00  21.129999  21.160000  19.549999  19.750000       0        0.0           0.0
+# 2023-10-31 00:00:00-05:00  19.860001  19.860001  17.969999  18.139999       0        0.0           0.0
+#
+# [500 rows x 7 columns]
+
+VIX = yf.Ticker('^VIX').history(start='2021-11-04', end='2023-11-01', interval='1d');
+
+
 
 #
 # Define relevant constants
 #
 
 
-EPISODE_COUNT = 7500;
-DAYS_PER_EPISODE = 75;
+# EPISODE_COUNT = 5000;
+EPISODE_COUNT = 3750;
+DAYS_PER_EPISODE = 50;
 ACCT_BAL_0 = 1000;
 
 SHARES_PER_TRADE = 10; # buy/sell fixed number of shares each time for simplicity
@@ -26,7 +93,8 @@ GAMMA = .99;
 # Initialize state space, action space, and Q-table
 #
 
-state_count = 5000;
+# state_count = 5000;
+state_count = 750;
 action_count = 3;
 
 Q = np.zeros((state_count, action_count));
@@ -39,6 +107,21 @@ Q = np.zeros((state_count, action_count));
 
 def closing_price (theta):
 	return 10*np.sin(theta) + 25;
+
+
+
+#
+# Fetch 500 days of SPY data
+
+#
+# Simulate the daily closing volume
+#
+
+# def closing_volume (theta):
+# 	base_volume = 1e5;
+# 	noise = 5000*np.random.rand();
+# 	volume = base_volume + noise;
+# 	return int(volume);
 
 
 
@@ -172,4 +255,3 @@ Q_test = test_agent(Q_table=Q, state0=0, bal0=ACCT_BAL_0, shares0=0);
 print('------');
 print('TESTING\n');
 print(Q_test);
-
