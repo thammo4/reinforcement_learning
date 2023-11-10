@@ -1,3 +1,5 @@
+import time; start_time = time.perf_counter();
+
 import os, dotenv;
 import numpy as np;
 
@@ -238,4 +240,8 @@ def test_agent (Q_table, state0, bal0, shares0, state_terminal=(state_count-1)):
 Q_test = test_agent(Q_table=Q, state0=0, bal0=ACCT_BAL_0, shares0=0);
 print('------');
 print('TESTING\n');
-print(Q_test);
+print(Q_test, '\n');
+
+end_time = time.perf_counter();
+elapsed_time = end_time - start_time;
+print(f"Program executed in {elapsed_time} seconds");
